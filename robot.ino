@@ -1,5 +1,7 @@
 
 // Robot code
+// Used to control robot car with Arduino Zero
+
 #include <IRremote.h>
 #include <Servo.h>
 
