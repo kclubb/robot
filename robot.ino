@@ -1,6 +1,7 @@
 
 // Robot code
 // Used to control robot car with Arduino Zero
+// For Terumobct project
 
 #include <IRremote.h>
 #include <Servo.h>
