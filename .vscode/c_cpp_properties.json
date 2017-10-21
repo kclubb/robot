@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\cores\\arduino",
+                "C:\\Users\\kclubb\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\samd\\1.6.16\\cores\\arduino"
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": false,
+                "path": [
+                    "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\cores\\arduino",
+                    "${workspaceRoot}",
+                    "C:\\Users\\kclubb\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\samd\\1.6.16\\cores\\arduino",
+                    "C:\\Users\\kclubb\\Documents\\Arduino\\libraries\\Arduino-IRremote",
+                    "C:\\Program Files (x86)\\Arduino\\libraries\\Servo\\src"
+                ]
+            },
+            "intelliSenseMode": "msvc-x64"
+        }
+    ],
+    "version": 3
+}

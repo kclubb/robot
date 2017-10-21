@@ -1,0 +1,5 @@
+{
+    "port": "COM6",
+    "board": "arduino:samd:arduino_zero_edbg",
+    "sketch": "robot.ino"
+}
