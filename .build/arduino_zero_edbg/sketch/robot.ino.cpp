@@ -1,6 +1,11 @@
 #include <Arduino.h>
 #line 1 "c:\\Users\\kclubb\\Documents\\Arduino\\robot\\robot.ino"
 #line 1 "c:\\Users\\kclubb\\Documents\\Arduino\\robot\\robot.ino"
+
+// Robot code
+// Used to control robot car with Arduino Zero
+// For Terumobct project
+
 #include <IRremote.h>
 #include <Servo.h>
 
@@ -37,27 +42,27 @@ decode_results results;
 unsigned long val;
 
  /*Ultrasonic distance measurement Sub function*/
-#line 37 "c:\\Users\\kclubb\\Documents\\Arduino\\robot\\robot.ino"
+#line 42 "c:\\Users\\kclubb\\Documents\\Arduino\\robot\\robot.ino"
 int Distance_test();
-#line 49 "c:\\Users\\kclubb\\Documents\\Arduino\\robot\\robot.ino"
+#line 54 "c:\\Users\\kclubb\\Documents\\Arduino\\robot\\robot.ino"
 void _mForward();
-#line 59 "c:\\Users\\kclubb\\Documents\\Arduino\\robot\\robot.ino"
+#line 64 "c:\\Users\\kclubb\\Documents\\Arduino\\robot\\robot.ino"
 void _mBack();
-#line 69 "c:\\Users\\kclubb\\Documents\\Arduino\\robot\\robot.ino"
+#line 74 "c:\\Users\\kclubb\\Documents\\Arduino\\robot\\robot.ino"
 void _mleft();
-#line 79 "c:\\Users\\kclubb\\Documents\\Arduino\\robot\\robot.ino"
+#line 84 "c:\\Users\\kclubb\\Documents\\Arduino\\robot\\robot.ino"
 void _mright();
-#line 89 "c:\\Users\\kclubb\\Documents\\Arduino\\robot\\robot.ino"
+#line 94 "c:\\Users\\kclubb\\Documents\\Arduino\\robot\\robot.ino"
 void _mStop();
-#line 95 "c:\\Users\\kclubb\\Documents\\Arduino\\robot\\robot.ino"
+#line 100 "c:\\Users\\kclubb\\Documents\\Arduino\\robot\\robot.ino"
 void _rright();
-#line 104 "c:\\Users\\kclubb\\Documents\\Arduino\\robot\\robot.ino"
+#line 109 "c:\\Users\\kclubb\\Documents\\Arduino\\robot\\robot.ino"
 void _rleft();
-#line 114 "c:\\Users\\kclubb\\Documents\\Arduino\\robot\\robot.ino"
+#line 119 "c:\\Users\\kclubb\\Documents\\Arduino\\robot\\robot.ino"
 void setup();
-#line 129 "c:\\Users\\kclubb\\Documents\\Arduino\\robot\\robot.ino"
+#line 134 "c:\\Users\\kclubb\\Documents\\Arduino\\robot\\robot.ino"
 void loop();
-#line 37 "c:\\Users\\kclubb\\Documents\\Arduino\\robot\\robot.ino"
+#line 42 "c:\\Users\\kclubb\\Documents\\Arduino\\robot\\robot.ino"
  int Distance_test()   
  {
    digitalWrite(Trig, LOW);   

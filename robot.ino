@@ -22,6 +22,7 @@ int Echo = A4;
 int Trig = A5; 
 int rightDistance = 0,leftDistance = 0,middleDistance = 0;
 
+int start_speed = 20;
 int RECV_PIN = 12;
 int in1=9;
 int in2=8;
@@ -30,8 +31,14 @@ int in4=6;
 int ENA=10;
 //int ENA = 11;
 int ENB=5;
-int ABS=115;
-//int ABS = 130;
+int abs_a=start_speed;
+int abs_b=start_speed;
+//int ABS_A = 130;
+
+bool forward = false;
+bool moving = false;
+long lastKey = 0L;
+
 
 IRrecv irrecv(RECV_PIN);
 Servo myservo; // create servo object to control servo
@@ -51,70 +58,83 @@ unsigned long val;
    return (int)Fdistance;
  }  
  
-void _mForward()
-{ 
-  digitalWrite(ENA,HIGH);
-  digitalWrite(ENB,HIGH);
-  digitalWrite(in1,HIGH); // right
-  digitalWrite(in2,LOW);  // right
-  digitalWrite(in3,LOW);  // left
-  digitalWrite(in4,HIGH); // left
-  Serial.println("go forward!");
-}
-void _mBack()
+void _moveStraight(bool bforward, bool speedup)
 {
-  digitalWrite(ENA,HIGH);
-  digitalWrite(ENB,HIGH);
-  digitalWrite(in1,LOW);
-  digitalWrite(in2,HIGH);
-  digitalWrite(in3,HIGH);
-  digitalWrite(in4,LOW);
-  Serial.println("go back!");
-}
-void _mleft()
+  moving = true;
+  forward = bforward;
+  if (speedup)
+  {
+    abs_a += 20;
+    if (abs_a >= 255) abs_a = 255;
+  }
+  abs_b = abs_a;
+  if (forward)
+  {
+    digitalWrite(in1,HIGH); // right
+    digitalWrite(in2,LOW);  // right
+    digitalWrite(in3,LOW);  // left
+    digitalWrite(in4,HIGH); // left
+    Serial.println("go forward!");
+  } 
+  else
+  {
+    digitalWrite(in1,LOW);
+    digitalWrite(in2,HIGH);
+    digitalWrite(in3,HIGH);
+    digitalWrite(in4,LOW);
+    Serial.println("go backwad!");
+  }
+  analogWrite(ENA,abs_a);
+  analogWrite(ENB,abs_b);
+} 
+void _stop()
 {
-  analogWrite(ENA,ABS);
-  digitalWrite(ENB,HIGH);
-  digitalWrite(in1,HIGH);
-  digitalWrite(in2,LOW);
-  digitalWrite(in3,HIGH);
-  digitalWrite(in4,LOW); 
-  Serial.println("go left!");
-}
-void _mright()
-{
-  analogWrite(ENA,ABS);
-  digitalWrite(ENB,HIGH);
-  digitalWrite(in1,LOW);
-  digitalWrite(in2,HIGH);
-  digitalWrite(in3,LOW);
-  digitalWrite(in4,HIGH);
-  Serial.println("go right!");
-}
-void _mStop()
-{
+  moving = false;
+  abs_a = start_speed;
+  abs_b = start_speed;
   digitalWrite(ENA,LOW);
   digitalWrite(ENB,LOW);
   Serial.println("STOP!");  
 }
-void _rright()
+void _turn(bool left, bool sharper)
 {
-  digitalWrite(ENA,ABS);
-  digitalWrite(ENB,ABS);
-  digitalWrite(in1,HIGH);
-  digitalWrite(in2,LOW);
-  digitalWrite(in3,LOW);      
-  digitalWrite(in4,HIGH);         //Left wheel forward
-}
-void _rleft()
-{
-  digitalWrite(ENA,ABS);
-  digitalWrite(ENB,ABS);
-  digitalWrite(in1,LOW);
-  digitalWrite(in2,HIGH);
-  digitalWrite(in3,HIGH);      
-  digitalWrite(in4,LOW);
-}
+  forward = true;
+  moving = true;
+  if (abs_a == 255 || abs_b == 255)
+  {
+    abs_a = start_speed;
+  } abs_b = start_speed;
+  if (left)
+    {
+      if (sharper)
+      {
+        abs_b += 20;
+      }
+      else
+      {
+        abs_b = abs_a + 20;
+      }
+      Serial.println("go left!");
+    }
+    else
+    {
+      if (sharper)
+      {
+        abs_a += 20;
+      }
+      else
+      {
+        abs_a = abs_b + 20;
+      }
+      Serial.println("go right!");
+    }
+    digitalWrite(in1,HIGH); // right
+    digitalWrite(in2,LOW);  // right
+    digitalWrite(in3,LOW);  // left
+    digitalWrite(in4,HIGH); // left
+    analogWrite(ENA,abs_a);
+    analogWrite(ENB,abs_b);
+  }
 
 void setup() {
   myservo.attach(3);// attach servo on pin 3 to servo object
@@ -126,11 +146,11 @@ void setup() {
   pinMode(in4,OUTPUT);
   pinMode(ENA,OUTPUT);
   pinMode(ENB,OUTPUT);
-  _mStop();
+  _stop();
   irrecv.enableIRIn();  
   Serial.begin(9600);
 }
-bool forward = false;
+
 void loop() {
   myservo.write(90);//setservo position according to scaled value
   delay(500); 
@@ -140,11 +160,11 @@ void loop() {
   Serial.println(middleDistance);
   #endif
 
-  if (forward)
+  if (forward && moving)
   {
     if(middleDistance<=20)
     {     
-      _mStop();
+      _stop();
       delay(500);                        
       myservo.write(10);//10°-180°          
       delay(1000);      
@@ -172,27 +192,27 @@ void loop() {
       delay(1000);
       if(rightDistance>leftDistance)  
       {
-        _mright();
+        _turn(false,false);
         delay(180);
       }
       else if(rightDistance<leftDistance)
       {
-        _mleft();
+        _turn(true,false);
         delay(180);
       }
       else if((rightDistance<=20)||(leftDistance<=20))
       {
-        _mBack();
+        _moveStraight(false,false);
         delay(180);
       }
       else
       {
-        _mForward();
+        _moveStraight(true,false);
       }
     }  
     else
     {
-      _mForward();                     
+      _moveStraight(true,false);                     
     }
   }
 
@@ -202,16 +222,31 @@ void loop() {
     irrecv.resume();
     switch(val){
       case F_KEY: 
-      case UNKNOWN_F: forward=true;_mForward();break;
+      case UNKNOWN_F:
+        if (lastKey == val) _moveStraight(true,true);
+        else _moveStraight(true,false);
+        break;
       case B_KEY: 
-      case UNKNOWN_B: forward=false;_mBack(); break;
+      case UNKNOWN_B: 
+        if (lastKey == val) _moveStraight(false,true);
+        else _moveStraight(false,false);
+        break;
       case L_KEY: 
-      case UNKNOWN_L: forward=true;_mleft(); break;
+      case UNKNOWN_L: 
+        if (lastKey == val) _turn(true,true);
+        else _turn(true,false);
+        break;
       case R_KEY: 
-      case UNKNOWN_R: forward=true;_mright();break;
+      case UNKNOWN_R: 
+        if (lastKey == val) _turn(false,true);
+        else _turn(false,false);
+        break;
       case S_KEY: 
-      case UNKNOWN_S: forward=false;_mStop(); break;
+      case UNKNOWN_S: 
+        _stop(); 
+        break;
       default:break;
+      lastKey = val;
     }
   }
 } 
